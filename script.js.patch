@@ -1,0 +1,368 @@
+--- ../acessos-rapidos-original/script.js	2025-08-20 18:04:32.519309888 -0400
++++ script.js	2025-08-20 17:42:46.408258253 -0400
+@@ -15,19 +15,32 @@
+         clients = JSON.parse(savedClients);
+     }
+ 
++    // Elementos DOM
+     const webPlusList = document.getElementById('web-plus-list');
+     const lightWebPlusList = document.getElementById('light-web-plus-list');
+     const modal = document.getElementById('add-client-modal');
++    const editModal = document.getElementById('edit-client-modal');
+     const addClientBtn = document.getElementById('add-client-btn');
+     const exportDataBtn = document.getElementById('export-data-btn');
+     const closeBtn = document.querySelector('.close');
++    const closeEditBtn = document.querySelector('.close-edit');
+     const cancelBtn = document.getElementById('cancel-btn');
++    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+     const addClientForm = document.getElementById('add-client-form');
++    const editClientForm = document.getElementById('edit-client-form');
++    const searchInput = document.getElementById('search-input');
++    const clearSearchBtn = document.getElementById('clear-search');
++    const resultsCount = document.getElementById('results-count');
++
++    // Variável para armazenar o cliente sendo editado
++    let editingClient = null;
+ 
+     // Função para criar um card de cliente
+     function createClientCard(client) {
+         const card = document.createElement('div');
+         card.className = 'client-card';
++        card.setAttribute('data-name', client.name.toLowerCase());
++        card.setAttribute('data-code', client.code.toLowerCase());
+ 
+         const image = document.createElement('img');
+         image.src = client.image;
+@@ -47,6 +60,19 @@
+         link.textContent = 'Acessar Sistema';
+         link.target = '_blank';
+ 
++        // Container para os botões
++        const buttonContainer = document.createElement('div');
++        buttonContainer.className = 'card-buttons';
++
++        const editBtn = document.createElement('button');
++        editBtn.textContent = '✏️ Editar';
++        editBtn.className = 'edit-btn';
++        
++        editBtn.addEventListener('click', (e) => {
++            e.preventDefault();
++            openEditModal(client);
++        });
++
+         const deleteBtn = document.createElement('button');
+         deleteBtn.textContent = '🗑️ Remover';
+         deleteBtn.className = 'delete-btn';
+@@ -58,8 +84,8 @@
+             border-radius: 20px;
+             font-size: 0.8em;
+             cursor: pointer;
+-            margin-top: 10px;
+             transition: all 0.3s ease;
++            font-weight: 600;
+         `;
+         
+         deleteBtn.addEventListener('click', (e) => {
+@@ -79,11 +105,14 @@
+             deleteBtn.style.transform = 'translateY(0)';
+         });
+ 
++        buttonContainer.appendChild(editBtn);
++        buttonContainer.appendChild(deleteBtn);
++
+         card.appendChild(image);
+         card.appendChild(name);
+         card.appendChild(code);
+         card.appendChild(link);
+-        card.appendChild(deleteBtn);
++        card.appendChild(buttonContainer);
+ 
+         return card;
+     }
+@@ -106,6 +135,13 @@
+ 
+         // Salvar no localStorage
+         localStorage.setItem('clientsData', JSON.stringify(clients));
++        
++        // Aplicar filtro de pesquisa se houver
++        if (searchInput.value.trim()) {
++            performSearch(searchInput.value.trim());
++        } else {
++            updateResultsCount();
++        }
+     }
+ 
+     // Função para adicionar novo cliente
+@@ -131,6 +167,116 @@
+         renderClients();
+     }
+ 
++    // Função para editar cliente
++    function editClient(oldClient, newClientData) {
++        const { name, code, type, image } = newClientData;
++        
++        // Remover cliente antigo
++        for (const clientType in clients) {
++            clients[clientType] = clients[clientType].filter(client => 
++                !(client.code === oldClient.code && client.name === oldClient.name)
++            );
++        }
++        
++        // Adicionar cliente editado
++        const updatedClient = {
++            name: name,
++            code: code,
++            image: image || 'Gemini_Generated_Image_tfvj6ptfvj6ptfvj.png'
++        };
++        
++        clients[type].push(updatedClient);
++        renderClients();
++    }
++
++    // Função para abrir modal de edição
++    function openEditModal(client) {
++        editingClient = client;
++        
++        document.getElementById('edit-client-name').value = client.name;
++        document.getElementById('edit-client-code').value = client.code;
++        document.getElementById('edit-client-image').value = client.image === 'Gemini_Generated_Image_tfvj6ptfvj6ptfvj.png' ? '' : client.image;
++        
++        // Determinar o tipo do cliente
++        let clientType = '';
++        for (const type in clients) {
++            if (clients[type].some(c => c.code === client.code && c.name === client.name)) {
++                clientType = type;
++                break;
++            }
++        }
++        document.getElementById('edit-client-type').value = clientType;
++        
++        editModal.style.display = 'block';
++    }
++
++    // Função para realizar pesquisa
++    function performSearch(searchTerm) {
++        const term = searchTerm.toLowerCase();
++        const allCards = document.querySelectorAll('.client-card');
++        let visibleCount = 0;
++        
++        allCards.forEach(card => {
++            const name = card.getAttribute('data-name');
++            const code = card.getAttribute('data-code');
++            
++            if (name.includes(term) || code.includes(term)) {
++                card.classList.remove('search-hidden');
++                card.classList.add('search-highlight');
++                visibleCount++;
++            } else {
++                card.classList.add('search-hidden');
++                card.classList.remove('search-highlight');
++            }
++        });
++        
++        updateResultsCount(visibleCount, searchTerm);
++        updateSectionVisibility();
++    }
++
++    // Função para limpar pesquisa
++    function clearSearch() {
++        searchInput.value = '';
++        const allCards = document.querySelectorAll('.client-card');
++        
++        allCards.forEach(card => {
++            card.classList.remove('search-hidden', 'search-highlight');
++        });
++        
++        clearSearchBtn.classList.remove('show');
++        updateResultsCount();
++        updateSectionVisibility();
++    }
++
++    // Função para atualizar contador de resultados
++    function updateResultsCount(count = null, searchTerm = '') {
++        if (count !== null) {
++            if (count === 0) {
++                resultsCount.textContent = `Nenhum resultado encontrado para "${searchTerm}"`;
++                resultsCount.style.color = '#dc3545';
++            } else {
++                resultsCount.textContent = `${count} resultado${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''} para "${searchTerm}"`;
++                resultsCount.style.color = '#28a745';
++            }
++        } else {
++            const totalClients = Object.values(clients).flat().length;
++            resultsCount.textContent = `${totalClients} cliente${totalClients !== 1 ? 's' : ''} cadastrado${totalClients !== 1 ? 's' : ''}`;
++            resultsCount.style.color = '#6c757d';
++        }
++    }
++
++    // Função para atualizar visibilidade das seções
++    function updateSectionVisibility() {
++        const webPlusSection = document.getElementById('web-plus');
++        const lightWebPlusSection = document.getElementById('light-web-plus');
++        
++        const webPlusVisible = webPlusList.querySelectorAll('.client-card:not(.search-hidden)').length > 0;
++        const lightWebPlusVisible = lightWebPlusList.querySelectorAll('.client-card:not(.search-hidden)').length > 0;
++        
++        webPlusSection.classList.toggle('section-empty', !webPlusVisible);
++        lightWebPlusSection.classList.toggle('section-empty', !lightWebPlusVisible);
++    }
++
+     // Função para exportar dados
+     function exportData() {
+         const dataStr = JSON.stringify(clients, null, 2);
+@@ -146,7 +292,48 @@
+         URL.revokeObjectURL(url);
+     }
+ 
++    // Função para mostrar mensagem de sucesso
++    function showSuccessMessage(message) {
++        const successMsg = document.createElement('div');
++        successMsg.textContent = message;
++        successMsg.style.cssText = `
++            position: fixed;
++            top: 20px;
++            right: 20px;
++            background: #28a745;
++            color: white;
++            padding: 15px 25px;
++            border-radius: 8px;
++            z-index: 1001;
++            animation: slideInRight 0.3s ease;
++            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
++        `;
++        
++        document.body.appendChild(successMsg);
++        setTimeout(() => {
++            if (document.body.contains(successMsg)) {
++                document.body.removeChild(successMsg);
++            }
++        }, 3000);
++    }
++
+     // Event Listeners
++
++    // Pesquisa
++    searchInput.addEventListener('input', (e) => {
++        const searchTerm = e.target.value.trim();
++        
++        if (searchTerm) {
++            clearSearchBtn.classList.add('show');
++            performSearch(searchTerm);
++        } else {
++            clearSearch();
++        }
++    });
++
++    clearSearchBtn.addEventListener('click', clearSearch);
++
++    // Modais
+     addClientBtn.addEventListener('click', () => {
+         modal.style.display = 'block';
+     });
+@@ -155,22 +342,31 @@
+         modal.style.display = 'none';
+     });
+ 
++    closeEditBtn.addEventListener('click', () => {
++        editModal.style.display = 'none';
++    });
++
+     cancelBtn.addEventListener('click', () => {
+         modal.style.display = 'none';
+     });
+ 
++    cancelEditBtn.addEventListener('click', () => {
++        editModal.style.display = 'none';
++    });
++
+     window.addEventListener('click', (e) => {
+         if (e.target === modal) {
+             modal.style.display = 'none';
+         }
++        if (e.target === editModal) {
++            editModal.style.display = 'none';
++        }
+     });
+ 
+-    exportDataBtn.addEventListener('click', exportData);
+-
++    // Formulários
+     addClientForm.addEventListener('submit', (e) => {
+         e.preventDefault();
+         
+-        const formData = new FormData(e.target);
+         const clientData = {
+             name: document.getElementById('client-name').value,
+             code: document.getElementById('client-code').value,
+@@ -189,31 +385,47 @@
+         modal.style.display = 'none';
+         addClientForm.reset();
+         
+-        // Mostrar mensagem de sucesso
+-        const successMsg = document.createElement('div');
+-        successMsg.textContent = `Cliente ${clientData.name} adicionado com sucesso!`;
+-        successMsg.style.cssText = `
+-            position: fixed;
+-            top: 20px;
+-            right: 20px;
+-            background: #28a745;
+-            color: white;
+-            padding: 15px 25px;
+-            border-radius: 8px;
+-            z-index: 1001;
+-            animation: slideInRight 0.3s ease;
+-        `;
++        showSuccessMessage(`Cliente ${clientData.name} adicionado com sucesso!`);
++    });
++
++    editClientForm.addEventListener('submit', (e) => {
++        e.preventDefault();
+         
+-        document.body.appendChild(successMsg);
+-        setTimeout(() => {
+-            document.body.removeChild(successMsg);
+-        }, 3000);
++        if (!editingClient) return;
++        
++        const clientData = {
++            name: document.getElementById('edit-client-name').value,
++            code: document.getElementById('edit-client-code').value,
++            type: document.getElementById('edit-client-type').value,
++            image: document.getElementById('edit-client-image').value
++        };
++
++        // Validar se o código já existe (exceto para o cliente atual)
++        const codeExists = Object.values(clients).flat().some(client => 
++            client.code === clientData.code && 
++            !(client.code === editingClient.code && client.name === editingClient.name)
++        );
++        
++        if (codeExists) {
++            alert('Este código de cliente já existe! Por favor, use um código diferente.');
++            return;
++        }
++
++        editClient(editingClient, clientData);
++        editModal.style.display = 'none';
++        editClientForm.reset();
++        editingClient = null;
++        
++        showSuccessMessage(`Cliente ${clientData.name} editado com sucesso!`);
+     });
+ 
++    // Exportar dados
++    exportDataBtn.addEventListener('click', exportData);
++
+     // Renderizar clientes iniciais
+     renderClients();
+ 
+-    // Adicionar animação de entrada
++    // Adicionar estilos de animação
+     const style = document.createElement('style');
+     style.textContent = `
+         @keyframes slideInRight {
+@@ -235,4 +447,3 @@
+     document.head.appendChild(style);
+ });
+ 
+-
