@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acessos Rápidos 3.0Web By Omar</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="Gemini_Generated_Image_tfvj6ptfvj6ptfvj.png">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Acessos Rápidos 3.0Web By Omar</h1>
+            <p>Portal de acesso aos sistemas Desbravador Software</p>
+        </div>
+    </header>
+    
+    <main>
+        <div class="intro-section">
+            <h2>Bem-vindo ao Portal de Acessos Rápidos</h2>
+            <p>Acesse rapidamente os sistemas 3.0 Web Plus e Light Web Plus da Desbravador Software. Selecione o cliente desejado abaixo para ser redirecionado ao sistema correspondente.</p>
+        </div>
+
+        <section id="web-plus">
+            <h2>🏨 3.0 Web Plus</h2>
+            <p class="section-description">Sistema completo de gestão hoteleira para hotéis de pequeno, médio e grande porte.</p>
+            <div class="client-list" id="web-plus-list">
+                <!-- Clientes 3.0 Web Plus serão adicionados aqui -->
+            </div>
+        </section>
+
+        <section id="light-web-plus">
+            <h2>🏠 Light Web Plus</h2>
+            <p class="section-description">Solução simplificada para pousadas, hostels e estabelecimentos menores.</p>
+            <div class="client-list" id="light-web-plus-list">
+                <!-- Clientes Light Web Plus serão adicionados aqui -->
+            </div>
+        </section>
+
+        <section id="admin-section" class="admin-section">
+            <h2>⚙️ Administração</h2>
+            <div class="admin-controls">
+                <button id="add-client-btn" class="admin-btn">Adicionar Novo Cliente</button>
+                <button id="export-data-btn" class="admin-btn">Exportar Dados</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para adicionar cliente -->
+    <div id="add-client-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Adicionar Novo Cliente</h3>
+            <form id="add-client-form">
+                <div class="form-group">
+                    <label for="client-name">Nome do Hotel:</label>
+                    <input type="text" id="client-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="client-code">Código do Cliente:</label>
+                    <input type="text" id="client-code" required>
+                </div>
+                <div class="form-group">
+                    <label for="client-type">Tipo de Sistema:</label>
+                    <select id="client-type" required>
+                        <option value="">Selecione...</option>
+                        <option value="3.0 Web Plus">3.0 Web Plus</option>
+                        <option value="Light Web Plus">Light Web Plus</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="client-image">URL da Imagem (opcional):</label>
+                    <input type="url" id="client-image" placeholder="https://exemplo.com/imagem.jpg">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Adicionar Cliente</button>
+                    <button type="button" id="cancel-btn" class="btn-secondary">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Acessos Rápidos 3.0Web By Omar</p>
+            <p>Desenvolvido para Desbravador Software</p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
