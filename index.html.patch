@@ -1,0 +1,61 @@
+--- ../acessos-rapidos-original/index.html	2025-08-20 18:04:32.519309888 -0400
++++ index.html	2025-08-20 17:40:12.018748938 -0400
+@@ -21,6 +21,17 @@
+             <p>Acesse rapidamente os sistemas 3.0 Web Plus e Light Web Plus da Desbravador Software. Selecione o cliente desejado abaixo para ser redirecionado ao sistema correspondente.</p>
+         </div>
+ 
++        <!-- Barra de Pesquisa -->
++        <div class="search-section">
++            <div class="search-container">
++                <input type="text" id="search-input" placeholder="🔍 Pesquisar por nome do hotel ou código..." />
++                <button id="clear-search" class="clear-btn" title="Limpar pesquisa">✕</button>
++            </div>
++            <div class="search-results-info">
++                <span id="results-count"></span>
++            </div>
++        </div>
++
+         <section id="web-plus">
+             <h2>🏨 3.0 Web Plus</h2>
+             <p class="section-description">Sistema completo de gestão hoteleira para hotéis de pequeno, médio e grande porte.</p>
+@@ -78,6 +89,40 @@
+                 </div>
+             </form>
+         </div>
++    </div>
++
++    <!-- Modal para editar cliente -->
++    <div id="edit-client-modal" class="modal">
++        <div class="modal-content">
++            <span class="close-edit">&times;</span>
++            <h3>Editar Cliente</h3>
++            <form id="edit-client-form">
++                <div class="form-group">
++                    <label for="edit-client-name">Nome do Hotel:</label>
++                    <input type="text" id="edit-client-name" required>
++                </div>
++                <div class="form-group">
++                    <label for="edit-client-code">Código do Cliente:</label>
++                    <input type="text" id="edit-client-code" required>
++                </div>
++                <div class="form-group">
++                    <label for="edit-client-type">Tipo de Sistema:</label>
++                    <select id="edit-client-type" required>
++                        <option value="">Selecione...</option>
++                        <option value="3.0 Web Plus">3.0 Web Plus</option>
++                        <option value="Light Web Plus">Light Web Plus</option>
++                    </select>
++                </div>
++                <div class="form-group">
++                    <label for="edit-client-image">URL da Imagem (opcional):</label>
++                    <input type="url" id="edit-client-image" placeholder="https://exemplo.com/imagem.jpg">
++                </div>
++                <div class="form-actions">
++                    <button type="submit" class="btn-primary">Salvar Alterações</button>
++                    <button type="button" id="cancel-edit-btn" class="btn-secondary">Cancelar</button>
++                </div>
++            </form>
++        </div>
+     </div>
+ 
+     <footer>
