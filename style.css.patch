@@ -1,0 +1,197 @@
+--- ../acessos-rapidos-original/style.css	2025-08-20 18:04:32.519309888 -0400
++++ style.css	2025-08-20 17:41:09.795303777 -0400
+@@ -483,3 +483,194 @@
+     }
+ }
+ 
++
++/* Estilos para a barra de pesquisa */
++.search-section {
++    margin-bottom: 40px;
++    padding: 25px;
++    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
++    border-radius: 15px;
++    border-left: 5px solid #007bff;
++}
++
++.search-container {
++    position: relative;
++    max-width: 600px;
++    margin: 0 auto;
++}
++
++#search-input {
++    width: 100%;
++    padding: 15px 50px 15px 20px;
++    border: 2px solid #e9ecef;
++    border-radius: 25px;
++    font-size: 1.1em;
++    background: #fff;
++    transition: all 0.3s ease;
++    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
++}
++
++#search-input:focus {
++    outline: none;
++    border-color: #007bff;
++    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.15);
++    transform: translateY(-2px);
++}
++
++.clear-btn {
++    position: absolute;
++    right: 15px;
++    top: 50%;
++    transform: translateY(-50%);
++    background: #6c757d;
++    color: white;
++    border: none;
++    border-radius: 50%;
++    width: 25px;
++    height: 25px;
++    cursor: pointer;
++    font-size: 12px;
++    display: none;
++    transition: all 0.3s ease;
++}
++
++.clear-btn:hover {
++    background: #5a6268;
++    transform: translateY(-50%) scale(1.1);
++}
++
++.clear-btn.show {
++    display: block;
++}
++
++.search-results-info {
++    text-align: center;
++    margin-top: 15px;
++    font-size: 0.9em;
++    color: #6c757d;
++    font-weight: 500;
++}
++
++/* Estilos para destacar resultados da pesquisa */
++.client-card.search-highlight {
++    border: 2px solid #007bff;
++    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
++}
++
++.client-card.search-hidden {
++    display: none;
++}
++
++/* Estilos para o botão de editar */
++.edit-btn {
++    background: #ffc107;
++    color: #212529;
++    border: none;
++    padding: 8px 16px;
++    border-radius: 20px;
++    font-size: 0.8em;
++    cursor: pointer;
++    margin-top: 10px;
++    margin-right: 10px;
++    transition: all 0.3s ease;
++    font-weight: 600;
++}
++
++.edit-btn:hover {
++    background: #e0a800;
++    transform: translateY(-2px);
++    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
++}
++
++/* Ajustes para os botões do card */
++.card-buttons {
++    display: flex;
++    gap: 10px;
++    justify-content: center;
++    flex-wrap: wrap;
++    margin-top: 15px;
++}
++
++/* Estilos para o close do modal de edição */
++.close-edit {
++    color: #aaa;
++    float: right;
++    font-size: 28px;
++    font-weight: bold;
++    cursor: pointer;
++    position: absolute;
++    right: 20px;
++    top: 15px;
++}
++
++.close-edit:hover {
++    color: #000;
++}
++
++/* Responsividade adicional para a pesquisa */
++@media (max-width: 768px) {
++    .search-section {
++        padding: 20px 15px;
++        margin-bottom: 30px;
++    }
++    
++    #search-input {
++        padding: 12px 45px 12px 15px;
++        font-size: 1em;
++    }
++    
++    .clear-btn {
++        right: 12px;
++        width: 22px;
++        height: 22px;
++        font-size: 11px;
++    }
++    
++    .card-buttons {
++        flex-direction: column;
++        align-items: center;
++    }
++    
++    .edit-btn,
++    .delete-btn {
++        width: 100%;
++        max-width: 200px;
++        margin: 5px 0;
++    }
++}
++
++/* Animação para quando não há resultados */
++.no-results {
++    text-align: center;
++    padding: 40px 20px;
++    color: #6c757d;
++    font-size: 1.1em;
++    font-style: italic;
++}
++
++.no-results::before {
++    content: "🔍";
++    display: block;
++    font-size: 3em;
++    margin-bottom: 15px;
++    opacity: 0.5;
++}
++
++/* Melhorias visuais para seções vazias */
++.section-empty {
++    opacity: 0.6;
++    transition: opacity 0.3s ease;
++}
++
++.section-empty .client-list::after {
++    content: "Nenhum resultado encontrado nesta categoria";
++    display: block;
++    text-align: center;
++    padding: 30px;
++    color: #6c757d;
++    font-style: italic;
++    background: #f8f9fa;
++    border-radius: 10px;
++    border: 2px dashed #dee2e6;
++}
++
